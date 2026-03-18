@@ -12,8 +12,9 @@ scipy
 PyYAML==6.0.2
 setuptools
 av==13.1.0
-torch==2.4.0
-torchvision==0.19.0
+torch==2.4.1+corex.4.3.8
+torchvision==0.19.1a0+corex.4.3.8
+ixformer==0.6.0+corex.4.3.8
 accelerate==1.0.0
 diffusers==0.30.3
 einops==0.8.0

@@ -4,7 +4,7 @@ n_view: 1
 
 model:
   
-  pretrained_checkpoint: PATH_TO_CHECKPOINT
+  pretrained_checkpoint: /home/EnerVerse-AC/EnerV_AC_deepspeed_v0.1.pt
 
   auto_padzero_input_block: False
   auto_padrand_input_block: False
@@ -132,9 +132,9 @@ model:
     img_cond_stage_config:
       target: evac.lvdm.modules.encoders.condition.FrozenOpenCLIPImageEmbedderV2
       params:
-        abspath: CLIP_WEIGHT_PATH
+        abspath: /home/CLIP-ViT-H-14-laion2B-s32B-b79K/open_clip_pytorch_model.bin
         freeze: true
-    
+
     image_proj_stage_config:
       target: evac.lvdm.modules.encoders.resampler.Resampler
       params:
@@ -156,7 +156,7 @@ data:
     train:
       target: dataset.agibotworld_challenge_dataset.AgiBotWorldICRA26Challenge
       params:
-        data_roots: ["PATH_TO_ICRA26_WM_DATASET", ]
+        data_roots: ["/home/AgiBotWorldChallenge-2026/WorldModel", ]
         domains: ["agibotworld", ]
         split: "train"
         sample_size: [320, 512]

@@ -12,6 +12,7 @@ from pytorch_lightning.utilities import rank_zero_info
 import numpy as np
 
 from save_video import log_local, prepare_to_log
+from device_utils import detect_backend, get_device_module
 
 
 class ImageLogger(Callback):
@@ -163,24 +164,37 @@ class ImageLogger(Callback):
 
 class CUDACallback(Callback):
     # see https://github.com/SeanNaren/minGPT/blob/master/mingpt/callback.py
+    def __init__(self, backend: str | None = None):
+        super().__init__()
+        self.backend = backend or detect_backend()
+        self.device_mod = get_device_module(self.backend)
+        self._enabled = self.device_mod is not None and all(
+            hasattr(self.device_mod, fn)
+            for fn in ("reset_peak_memory_stats", "synchronize", "max_memory_allocated")
+        )
+
     def on_train_epoch_start(self, trainer, pl_module):
+        if not self._enabled:
+            return
         # Reset the memory use counter
         # lightning update
         if int((pl.__version__).split('.')[1])>=7:
-            gpu_index = trainer.strategy.root_device.index
+            gpu_index = getattr(trainer.strategy.root_device, "index", 0)
         else:
             gpu_index = trainer.root_gpu
-        torch.cuda.reset_peak_memory_stats(gpu_index)
-        torch.cuda.synchronize(gpu_index)
+        self.device_mod.reset_peak_memory_stats(gpu_index)
+        self.device_mod.synchronize(gpu_index)
         self.start_time = time.time()
 
     def on_train_epoch_end(self, trainer, pl_module):
+        if not self._enabled:
+            return
         if int((pl.__version__).split('.')[1])>=7:
-            gpu_index = trainer.strategy.root_device.index
+            gpu_index = getattr(trainer.strategy.root_device, "index", 0)
         else:
             gpu_index = trainer.root_gpu
-        torch.cuda.synchronize(gpu_index)
-        max_memory = torch.cuda.max_memory_allocated(gpu_index) / 2 ** 20
+        self.device_mod.synchronize(gpu_index)
+        max_memory = self.device_mod.max_memory_allocated(gpu_index) / 2 ** 20
         epoch_time = time.time() - self.start_time
 
         try:

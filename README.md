@@ -1,4 +1,4 @@
-# World Model Baseline
+﻿# World Model Baseline
 
 We adopt [EVAC](https://github.com/AgibotTech/EnerVerse-AC) as the baseline model for the [AgiBot World Challenge @ ICRA 2026](https://agibot-world.com/challenge2026) - World Model track.
 
@@ -6,13 +6,13 @@ This repo provides a minial version of training codes.
 
 ## News 
 
-- 🚀🚀 **The [test server](https://huggingface.co/spaces/agibot-world/ICRA26WM) of AgiBot World Challenge @ ICRA 2026  is available now.** Please visit the [huggingface competition space](https://huggingface.co/spaces/agibot-world/ICRA26WM) for more details.
+- 馃殌馃殌 **The [test server](https://huggingface.co/spaces/agibot-world/ICRA26WM) of AgiBot World Challenge @ ICRA 2026  is available now.** Please visit the [huggingface competition space](https://huggingface.co/spaces/agibot-world/ICRA26WM) for more details.
 
 - The instruction to evaluating your model locally have been released.
 
-- 🚀🚀 The minimal version of training code for [AgiBot World Challenge @ ICRA 2026](https://agibot-world.com/challenge2026) - World Model track have been released.
+- 馃殌馃殌 The minimal version of training code for [AgiBot World Challenge @ ICRA 2026](https://agibot-world.com/challenge2026) - World Model track have been released.
 
-- 🔥🔥 The training and validation datasets of [AgiBot World Challenge @ ICRA 2026 - World Model track](https://huggingface.co/datasets/agibot-world/AgiBotWorldChallenge-2026/tree/main/WorldModel) have been released.
+- 馃敟馃敟 The training and validation datasets of [AgiBot World Challenge @ ICRA 2026 - World Model track](https://huggingface.co/datasets/agibot-world/AgiBotWorldChallenge-2026/tree/main/WorldModel) have been released.
 
 - The minimal version of training code for AgibotWorld dataset and pretrained weights have been released.
 
@@ -26,10 +26,21 @@ conda activate enerverse
 
 pip install -r requirements.txt
 
-### install pytorch3d following https://github.com/facebookresearch/pytorch3d
-### note that although the CUDA version is 11.8, we use the pytorch3d prebuilt on CUDA 12.1
-pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py310_cu121_pyt240/download.html
+### BI-V150S / Corex CUDA environment
+### If your environment provides Corex CUDA wheels (e.g. torch==2.4.1+corex.4.3.8), use:
+pip install -r requirements-corex.txt
+### If you want to keep an existing Corex environment, install only missing packages:
+pip install -r requirements-corex-extra.txt
 
+### (Optional) pytorch3d
+### Not required by current training/inference code. Skip if no wheel.
+### https://github.com/facebookresearch/pytorch3d
+### note that although the CUDA version is 11.8, we use the pytorch3d prebuilt on CUDA 12.1
+### pip install --no-index --no-cache-dir pytorch3d -f https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py310_cu121_pyt240/download.html
+
+### (Optional) xformers
+### Speeds up attention if available. Not required.
+### pip install xformers==0.0.27.post2
 ```
 
 ### Inference
@@ -41,16 +52,16 @@ We have released the [test set](https://huggingface.co/datasets/agibot-world/Agi
 1. Download the reorganized validation set or the test dataset, or reorganize you custom dataset to the the required directory structure outlined below.
 ```
 PATH_TO_YOUR_DATASET/
-├── task_0/
-│   ├── episode_0/
-│   │   ├── frame.png
-│   │   ├── head_intrinsic_params.json
-│   │   ├── head_extrinsic_params_aligned.json
-│   │   └── proprio_stats.h5
-│   ├── episode_2/
-│   └── ...
-├── task_1/
-└── ...
+鈹溾攢鈹€ task_0/
+鈹?  鈹溾攢鈹€ episode_0/
+鈹?  鈹?  鈹溾攢鈹€ frame.png
+鈹?  鈹?  鈹溾攢鈹€ head_intrinsic_params.json
+鈹?  鈹?  鈹溾攢鈹€ head_extrinsic_params_aligned.json
+鈹?  鈹?  鈹斺攢鈹€ proprio_stats.h5
+鈹?  鈹溾攢鈹€ episode_2/
+鈹?  鈹斺攢鈹€ ...
+鈹溾攢鈹€ task_1/
+鈹斺攢鈹€ ...
 ```
 2. If you are using EVAC as the baseline model, make sure the submodule [evac](https://huggingface.co/agibot-world/EnerVerse-AC) is the latest version
 ```
@@ -62,30 +73,30 @@ git submodule update --remote
 5. The output directory will contain the following:
 ```
 ACWM_dataset/
-├── task_0/
-│   ├── episode_0/
-│   |   ├── 0/
-|   |   |   └── video/
-|   |   |       ├── frame_00000.jpg
-|   |   |       ├── frame_00001.jpg
-|   |   |       ├── ...
-|   |   |       └── frame_*.jpg
-│   |   ├── 1/
-|   |   |   └── video/
-|   |   |       ├── frame_00000.jpg
-|   |   |       ├── frame_00001.jpg
-|   |   |       ├── ...
-|   |   |       └── frame_*.jpg
-│   |   └── 2/
-|   |       └── video/
-|   |           ├── frame_00000.jpg
-|   |           ├── frame_00001.jpg
-|   |           ├── ...
-|   |           └── frame_*.jpg
-│   ├── episode_1/
-│   └── ...
-├── task_1/
-└── ...
+鈹溾攢鈹€ task_0/
+鈹?  鈹溾攢鈹€ episode_0/
+鈹?  |   鈹溾攢鈹€ 0/
+|   |   |   鈹斺攢鈹€ video/
+|   |   |       鈹溾攢鈹€ frame_00000.jpg
+|   |   |       鈹溾攢鈹€ frame_00001.jpg
+|   |   |       鈹溾攢鈹€ ...
+|   |   |       鈹斺攢鈹€ frame_*.jpg
+鈹?  |   鈹溾攢鈹€ 1/
+|   |   |   鈹斺攢鈹€ video/
+|   |   |       鈹溾攢鈹€ frame_00000.jpg
+|   |   |       鈹溾攢鈹€ frame_00001.jpg
+|   |   |       鈹溾攢鈹€ ...
+|   |   |       鈹斺攢鈹€ frame_*.jpg
+鈹?  |   鈹斺攢鈹€ 2/
+|   |       鈹斺攢鈹€ video/
+|   |           鈹溾攢鈹€ frame_00000.jpg
+|   |           鈹溾攢鈹€ frame_00001.jpg
+|   |           鈹溾攢鈹€ ...
+|   |           鈹斺攢鈹€ frame_*.jpg
+鈹?  鈹溾攢鈹€ episode_1/
+鈹?  鈹斺攢鈹€ ...
+鈹溾攢鈹€ task_1/
+鈹斺攢鈹€ ...
 ```
 
 ### Online Evaluation on test dataset
@@ -101,16 +112,16 @@ Check [agibot-world/ICRA26WM](https://huggingface.co/spaces/agibot-world/ICRA26W
 ```
 DIRPATH_TO_YOUR_DATASET/
   gt_dataset/
-  ├── task_1/
-  │   ├── episode_1/
-  │   │   └── video/
-  │   │       ├── frame_00000.png
-  │   │       ├── ...
-  │   │       └── frame_0000n.png
-  │   ├── episode_2/
-  │   └── ...
-  ├── task_2/
-  └── ...
+  鈹溾攢鈹€ task_1/
+  鈹?  鈹溾攢鈹€ episode_1/
+  鈹?  鈹?  鈹斺攢鈹€ video/
+  鈹?  鈹?      鈹溾攢鈹€ frame_00000.png
+  鈹?  鈹?      鈹溾攢鈹€ ...
+  鈹?  鈹?      鈹斺攢鈹€ frame_0000n.png
+  鈹?  鈹溾攢鈹€ episode_2/
+  鈹?  鈹斺攢鈹€ ...
+  鈹溾攢鈹€ task_2/
+  鈹斺攢鈹€ ...
 ```
 3. Modify the path in PATH_TO_EWMBench/config.yaml
 ```
@@ -145,7 +156,7 @@ We only use three metrics for online evaluation: **PSNR**, **scene_consistency**
 
 #### Training on [AgiBot World Challenge @ ICRA 2026](https://agibot-world.com/challenge2026)
 
-1. Download [🤗AgiBot World Challenge @ ICRA 2026 - World Model track](https://huggingface.co/datasets/agibot-world/AgiBotWorldChallenge-2026/blob/main/WorldModel) dataset.
+1. Download [馃AgiBot World Challenge @ ICRA 2026 - World Model track](https://huggingface.co/datasets/agibot-world/AgiBotWorldChallenge-2026/blob/main/WorldModel) dataset.
 
 2. Download the checkpoint from [EVAC](https://huggingface.co/agibot-world/EnerVerse-AC), and modify ``model.pretrained_checkpoint`` in ``configs/agibotworld/train_config_challenge_wm.yaml`` to the checkpoint file ``*.pt``
 
@@ -161,7 +172,7 @@ bash scripts/train.sh configs/agibotworld/train_config_challenge_wm.yaml
 
 #### Training on [AgiBotWolrd](https://huggingface.co/datasets/agibot-world/AgiBotWorld-Beta)
 
-1. Download [🤗AgiBotWolrd](https://huggingface.co/datasets/agibot-world/AgiBotWorld-Beta) dataset.
+1. Download [馃AgiBotWolrd](https://huggingface.co/datasets/agibot-world/AgiBotWorld-Beta) dataset.
 
 2. Download the checkpoint from [EVAC](https://huggingface.co/agibot-world/EnerVerse-AC), and modify ``model.pretrained_checkpoint`` in ``configs/agibotworld/train_configs.yaml`` to the checkpoint file ``*.pt``
 
@@ -180,7 +191,7 @@ bash scripts/train.sh configs/agibotworld/train_config.yaml
 - Deep Dive into Evaluation Metrics: Highly recommend conducting a thorough study of the evaluation metrics. Understanding exactly how you're being graded is step one to optimization.
 - Optimize Local Validation: Evaluation attempts on the test server are limited each day. Make the most of your validation set for local testing to ensure your submissions are truly ready.
 - Handle Calibration Errors: The EVAC approach utilizes robot camera parameters to align actions with observations. However, camera calibration is rarely perfect. In a high-stakes competition, finding an effective way to mitigate these small systematic errors could be your winning edge.
--  Think Beyond the Baseline: Don’t feel restricted to our baseline! We encourage you to explore:
+-  Think Beyond the Baseline: Don鈥檛 feel restricted to our baseline! We encourage you to explore:
    - Higher-performance video generation models.
    - More ingenious methods for action signal injection.
    - Applying preference learning to your models.
@@ -218,4 +229,7 @@ Please consider citing our paper if our codes are useful:
 
 ## License
 All the data and code within this repo are under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). 
+
+
+
 

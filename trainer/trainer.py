@@ -14,6 +14,7 @@ import torch
 
 from evac.utils.general_utils import instantiate_from_config, set_logger, load_checkpoints
 from utils_train import get_trainer_callbacks, get_trainer_logger, get_trainer_strategy, init_workspace
+from device_utils import detect_backend, pl_accelerator, autocast_context
 
 
 def get_parser(**parser_kwargs):
@@ -59,6 +60,7 @@ if __name__ == "__main__":
     config = OmegaConf.merge(*configs, cli)
     lightning_config = config.pop("lightning", OmegaConf.create())
     trainer_config = lightning_config.get("trainer", OmegaConf.create()) 
+    backend = detect_backend()
 
     ## setup workspace directories
     workdir, ckptdir, cfgdir, loginfo = init_workspace(args.name, args.logdir, config, lightning_config, global_rank)
@@ -86,7 +88,7 @@ if __name__ == "__main__":
         
     num_nodes = trainer_config.num_nodes
     ngpu_per_node = trainer_config.devices
-    logger.info(f"Running on {num_rank}={num_nodes}x{ngpu_per_node} GPUs")
+    logger.info(f"Running on {num_rank}={num_nodes}x{ngpu_per_node} devices, backend={backend}")
 
     ## setup learning rate
     base_lr = config.model.base_learning_rate
@@ -108,7 +110,7 @@ if __name__ == "__main__":
     ## TRAINER CONFIG >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
     logger.info("***** Configing Trainer *****")
     if "accelerator" not in trainer_config:
-        trainer_config["accelerator"] = "gpu"
+        trainer_config["accelerator"] = pl_accelerator(backend)
 
     ## setup trainer args: pl-logger and callbacks
     trainer_kwargs = dict()
@@ -154,7 +156,7 @@ if __name__ == "__main__":
                 logger.info("<Training in DeepSpeed Mode>")
                 ## deepspeed
                 if trainer_kwargs['precision'] == 16:
-                    with torch.cuda.amp.autocast():
+                    with autocast_context(backend, enabled=True):
                         trainer.fit(model, data)
                 else:
                     trainer.fit(model, data)
