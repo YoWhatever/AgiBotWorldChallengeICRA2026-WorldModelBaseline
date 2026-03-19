@@ -123,8 +123,20 @@ def get_trainer_logger(lightning_config, logdir):
     logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
     return logger_cfg
 
+def _to_int(val, default=None):
+    if val is None:
+        return default
+    if isinstance(val, int):
+        return val
+    try:
+        return int(val)
+    except Exception:
+        return default
+
+
 def get_trainer_strategy(lightning_config, devices: int | None = None):
     # Avoid DDPShardedStrategy (requires fairscale). Default to DDP for multi-GPU.
+    devices = _to_int(devices, default=None)
     if devices is not None and devices <= 1:
         default_strategy_dict = "auto"
     else:
@@ -135,6 +147,9 @@ def get_trainer_strategy(lightning_config, devices: int | None = None):
     else:
         strategy_cfg = OmegaConf.create()
 
+    # If default strategy is a string, return it directly.
+    if isinstance(default_strategy_dict, str):
+        return default_strategy_dict
     strategy_cfg = OmegaConf.merge(default_strategy_dict, strategy_cfg)
     return strategy_cfg
 

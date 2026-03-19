@@ -10,3 +10,6 @@ pytorch-lightning==1.9.5
 tensorboard
 kornia
 moviepy==1.0.3
+omegaconf
+jsonlines
+fairscale
