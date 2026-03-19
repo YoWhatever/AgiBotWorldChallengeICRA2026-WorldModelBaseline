@@ -123,10 +123,12 @@ def get_trainer_logger(lightning_config, logdir):
     logger_cfg = OmegaConf.merge(default_logger_cfg, logger_cfg)
     return logger_cfg
 
-def get_trainer_strategy(lightning_config):
-    default_strategy_dict = {
-        "target": "pytorch_lightning.strategies.DDPShardedStrategy"
-    }
+def get_trainer_strategy(lightning_config, devices: int | None = None):
+    # Avoid DDPShardedStrategy (requires fairscale). Default to DDP for multi-GPU.
+    if devices is not None and devices <= 1:
+        default_strategy_dict = "auto"
+    else:
+        default_strategy_dict = "ddp"
     if "strategy" in lightning_config:
         strategy_cfg = lightning_config.strategy
         return strategy_cfg

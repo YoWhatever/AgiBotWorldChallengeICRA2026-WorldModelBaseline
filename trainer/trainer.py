@@ -121,7 +121,7 @@ if __name__ == "__main__":
     ## setup callbacks
     callbacks_cfg = get_trainer_callbacks(lightning_config, config, workdir, ckptdir, logger)
     trainer_kwargs["callbacks"] = [instantiate_from_config(callbacks_cfg[k]) for k in callbacks_cfg]
-    strategy_cfg = get_trainer_strategy(lightning_config)
+    strategy_cfg = get_trainer_strategy(lightning_config, devices=trainer_config.get("devices", 1))
     trainer_kwargs["strategy"] = strategy_cfg if type(strategy_cfg) == str else instantiate_from_config(strategy_cfg)
     trainer_kwargs['precision'] = lightning_config.get('precision', 32)
     trainer_kwargs["sync_batchnorm"] = False
